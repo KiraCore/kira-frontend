@@ -113,7 +113,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   void getWithdrawalTransactions() async {
     if (currentAccount != null) {
       List<Transaction> wTxs =
-          await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: true);
+      await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: true);
 
       setState(() {
         transactions = wTxs;
@@ -441,7 +441,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     // final String gravatar = gravatarService.getIdenticon(currentAccount != null ? currentAccount.bech32Address : "");
 
     final String reducedAddress =
-        currentAccount.bech32Address.replaceRange(10, currentAccount.bech32Address.length - 7, '....');
+    currentAccount.bech32Address.replaceRange(10, currentAccount.bech32Address.length - 7, '....');
 
     return Container(
         margin: EdgeInsets.only(bottom: 30),
@@ -452,11 +452,11 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             InkWell(
               onTap: () {
                 FlutterClipboard.copy(currentAccount.bech32Address).then((value) => {
-                      setState(() {
-                        copied = !copied;
-                      }),
-                      if (copied == true) {autoPress()}
-                    });
+                  setState(() {
+                    copied = !copied;
+                  }),
+                  if (copied == true) {autoPress()}
+                });
               },
               borderRadius: BorderRadius.circular(500),
               onHighlightChanged: (value) {},
@@ -548,6 +548,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         // Sign the transaction
         final signedStdTx = await TransactionSigner.signStdTx(currentAccount, stdTx);
 
+        print(signedStdTx);
         // Broadcast signed transaction
         final result = await TransactionSender.broadcastStdTx(account: currentAccount, stdTx: signedStdTx);
 

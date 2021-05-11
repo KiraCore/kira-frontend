@@ -21,7 +21,7 @@ class FluroRouter {
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => GlobalScreen());
 
   static fluroRouter.Handler _loginHandler =
-      fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => LoginScreen());
+  fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => LoginScreen());
 
   static fluroRouter.Handler _loginWithMnemonicsHandler = fluroRouter.Handler(
       handlerFunc: (BuildContext context, Map<String, dynamic> params) => LoginWithMnemonicScreen());
@@ -39,7 +39,7 @@ class FluroRouter {
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => DepositScreen());
 
   static fluroRouter.Handler _tokenBalancesHandler =
-      fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => TokenBalanceScreen());
+  fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params)  => TokenBalanceScreen());
 
   static fluroRouter.Handler _withdrawalHandler =
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => WithdrawalScreen());
@@ -57,7 +57,7 @@ class FluroRouter {
       fluroRouter.Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) => SettingsScreen());
 
   static void setupRouter() {
-    router.define('/', handler: _globalHandler, transitionType: fluroRouter.TransitionType.fadeIn);
+    // router.define('/', handler: _globalHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/login', handler: _loginHandler, transitionType: fluroRouter.TransitionType.fadeIn);
     router.define('/login-mnemonic',
         handler: _loginWithMnemonicsHandler, transitionType: fluroRouter.TransitionType.fadeIn);
