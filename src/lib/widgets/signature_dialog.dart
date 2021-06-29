@@ -52,8 +52,8 @@ class _SignatureDialogState extends State<SignatureDialog> {
     var list = matches.map((m) => m.group(0)).toList();
     widget.stdMsgData = [];
     for (var i = 0; i < list.length; i++) {
-      var PAGE_COUNT = i + 1;
-      var framesData = {"max": "${list.length}", "page": PAGE_COUNT, "data": list[i]};
+      var pageCount = i + 1;
+      var framesData = {"max": "${list.length}", "page": pageCount, "data": list[i]};
       var jsonFrame = jsonEncode(framesData);
 
       setState(() {

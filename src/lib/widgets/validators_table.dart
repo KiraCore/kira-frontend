@@ -8,15 +8,11 @@ import 'package:kira_auth/models/validator.dart';
 import 'package:kira_auth/utils/export.dart';
 
 class ValidatorsTable extends StatefulWidget {
-  final List<Validator> totalValidators;
   final List<Validator> validators;
   final int expandedTop;
   final Function onChangeLikes;
   final Function onTapRow;
   final StreamController controller;
-  final int totalPages;
-  final bool isFiltering;
-  final Function loadMore;
   final int page;
   final Function setPage;
   final bool isLoggedIn;
@@ -24,15 +20,11 @@ class ValidatorsTable extends StatefulWidget {
   ValidatorsTable({
     Key key,
     this.isLoggedIn,
-    this.totalValidators,
     this.validators,
     this.expandedTop,
     this.onChangeLikes,
     this.onTapRow,
     this.controller,
-    this.totalPages,
-    this.isFiltering,
-    this.loadMore,
     this.page,
     this.setPage,
   }) : super();
@@ -66,8 +58,6 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
       currentValidators = [];
       if (widget.validators.length > startAt)
         currentValidators = widget.validators.sublist(startAt, min(endAt, widget.validators.length));
-      if (!widget.isFiltering && currentValidators.length < PAGE_COUNT && (widget.validators.length / PAGE_COUNT).ceil() < widget.totalPages)
-        widget.loadMore();
     });
     if (newPage > 0)
       refreshExpandStatus();
@@ -113,7 +103,7 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
   }
 
   Widget addNavigateControls() {
-    var totalPages = widget.isFiltering ? (widget.validators.length / PAGE_COUNT).ceil() : widget.totalPages;
+    var totalPages = (widget.validators.length / PAGE_COUNT).ceil();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:expandable/expandable.dart';
@@ -12,6 +13,7 @@ class TransactionsTable extends StatefulWidget {
   final bool isDeposit;
   final int page;
   final Function setPage;
+  final StreamController controller;
 
   TransactionsTable({
     Key key,
@@ -21,6 +23,7 @@ class TransactionsTable extends StatefulWidget {
     this.isDeposit,
     this.page,
     this.setPage,
+    this.controller,
   }) : super();
 
   @override
@@ -38,6 +41,7 @@ class _TransactionsTableState extends State<TransactionsTable> {
     super.initState();
 
     setPage();
+    widget.controller.stream.listen((_) => setPage());
   }
 
   setPage({int newPage = 0}) {
