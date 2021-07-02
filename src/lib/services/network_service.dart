@@ -8,7 +8,6 @@ import 'package:kira_auth/utils/export.dart';
 
 class NetworkService {
   List<Validator> validators = [];
-  int totalCount = 0;
   int lastOffset = 0;
 
   List<Block> blocks = [];
@@ -20,38 +19,12 @@ class NetworkService {
   List<BlockTransaction> transactions = [];
   BlockTransaction transaction;
 
-  Future<void> getValidatorsCount() async {
-    var apiUrl = await loadInterxURL();
-    var data = await http.get(apiUrl[0] + "/valopers?count_total=true",
-        headers: {'Access-Control-Allow-Origin': apiUrl[1]});
-
-    var bodyData = json.decode(data.body);
-    if (!bodyData.containsKey('pagination')) return;
-
-    totalCount = int.parse(bodyData['pagination']['total'] ?? '0');
-  }
-
-  Future<void> getValidators(bool loadNew) async {
+  Future<void> getValidators() async {
     List<Validator> validatorList = [];
 
     var apiUrl = await loadInterxURL();
-    var offset, limit;
-    if (loadNew) {
-      offset = totalCount;
-      await getValidatorsCount();
-      limit = totalCount - offset;
-    } else {
-      if (lastOffset == 0) {
-        await getValidatorsCount();
-        lastOffset = totalCount;
-      }
-      offset = max(lastOffset - PAGE_COUNT, 0);
-      limit = lastOffset - offset;
-      lastOffset = offset;
-    }
-    if (limit == 0) return;
 
-    var data = await http.get(apiUrl[0] + "/valopers?offset=$offset&limit=$limit&count_total=true", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
+    var data = await http.get(apiUrl[0] + "/valopers?offset=$lastOffset&count_total=true", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
 
     var bodyData = json.decode(data.body);
     if (!bodyData.containsKey('validators')) return;
@@ -61,6 +34,7 @@ class NetworkService {
       validatorList.add(Validator.fromJson(validators[i]));
 
     this.validators.addAll(validatorList);
+    lastOffset = this.validators.length;
   }
 
   Future<Validator> searchValidator(String proposer) async {

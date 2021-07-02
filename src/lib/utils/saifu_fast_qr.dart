@@ -101,10 +101,10 @@ class _SaifuFastQRState extends State<SaifuFastQR> {
 
     List<String> stdFrame = [];
     for (var i = 0; i < list.length; i++) {
-      var PAGE_COUNT = i + 1;
+      var pageCount = i + 1;
       var framesData = {
         "max": "${list.length}",
-        "page": PAGE_COUNT,
+        "page": pageCount,
         "data": list[i]
       };
       var jsonFrame = jsonEncode(framesData);
@@ -126,10 +126,10 @@ class _SaifuFastQRState extends State<SaifuFastQR> {
     var list = matches.map((m) => m.group(0)).toList();
     //widget.stdMsgData = [];
     for (var i = 0; i < list.length; i++) {
-      var PAGE_COUNT = i + 1;
+      var pageCount = i + 1;
       var framesData = {
         "max": "${list.length}",
-        "page": PAGE_COUNT,
+        "page": pageCount,
         "data": list[i]
       };
       var jsonFrame = jsonEncode(framesData);

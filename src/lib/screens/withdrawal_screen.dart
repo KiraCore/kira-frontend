@@ -64,6 +64,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
   String expandedHash;
   bool initialFetched = false;
   int page = 1;
+  StreamController transactionsController = StreamController.broadcast();
 
   @override
   void initState() {
@@ -743,6 +744,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
               onTapRow: (hash) => this.setState(() {
                 expandedHash = hash;
               }),
+              controller: transactionsController,
             )
           ],
         ));

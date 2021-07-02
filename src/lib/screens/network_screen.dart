@@ -27,7 +27,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
   List<String> favoriteValidators = [];
   int expandedTop = -1;
   int sortIndex = 0;
-  bool isAscending = false;
+  bool isAscending = true;
   bool isNetworkHealthy = false;
   int page = 1;
   StreamController validatorController = StreamController.broadcast();
@@ -36,6 +36,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
   String customInterxRPCUrl = "";
   List<String> networkIds = [Strings.customNetwork];
   String networkId = Strings.customNetwork;
+  Timer timer;
 
   @override
   void initState() {
@@ -67,14 +68,17 @@ class _NetworkScreenState extends State<NetworkScreen> {
     }
 
     getNodeStatus();
-    getValidators(false);
+    getValidators();
+    timer = Timer.periodic(Duration(minutes: 2), (timer) {
+      getValidators();
+    });
   }
 
-  void getValidators(bool loadNew) async {
+  void getValidators() async {
     setState(() {
-      moreLoading = !loadNew;
+      moreLoading = true;
     });
-    await networkService.getValidators(loadNew);
+    await networkService.getValidators();
     if (mounted) {
       setState(() {
         moreLoading = false;
@@ -148,6 +152,12 @@ class _NetworkScreenState extends State<NetworkScreen> {
         }
       });
     }
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -402,14 +412,10 @@ class _NetworkScreenState extends State<NetworkScreen> {
           children: [
             ValidatorsTable(
               isLoggedIn: isLoggedIn,
-              isFiltering: query.isNotEmpty,
               page: page,
               setPage: (newPage) => this.setState(() {
                 page = newPage;
               }),
-              totalPages: (networkService.totalCount / PAGE_COUNT).ceil(),
-              loadMore: () => getValidators(false),
-              totalValidators: validators,
               validators: filteredValidators,
               expandedTop: expandedTop,
               onChangeLikes: (top) {
@@ -434,19 +440,18 @@ class _NetworkScreenState extends State<NetworkScreen> {
   }
 
   void refreshTableSort() {
-    this.setState(() {
-      if (sortIndex == 0) {
-        filteredValidators.sort((a, b) => isAscending ? a.top.compareTo(b.top) : b.top.compareTo(a.top));
-      } else if (sortIndex == 2) {
-        filteredValidators
-            .sort((a, b) => isAscending ? a.moniker.compareTo(b.moniker) : b.moniker.compareTo(a.moniker));
-      } else if (sortIndex == 3) {
-        filteredValidators.sort((a, b) => isAscending ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
-      } else if (sortIndex == 4) {
-        filteredValidators.sort((a, b) => !isAscending
-            ? a.isFavorite.toString().compareTo(b.isFavorite.toString())
-            : b.isFavorite.toString().compareTo(a.isFavorite.toString()));
-      }
-    });
+    if (sortIndex == 0) {
+      filteredValidators.sort((a, b) => isAscending ? a.top.compareTo(b.top) : b.top.compareTo(a.top));
+    } else if (sortIndex == 2) {
+      filteredValidators
+          .sort((a, b) => isAscending ? a.moniker.compareTo(b.moniker) : b.moniker.compareTo(a.moniker));
+    } else if (sortIndex == 3) {
+      filteredValidators.sort((a, b) => isAscending ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
+    } else if (sortIndex == 4) {
+      filteredValidators.sort((a, b) => !isAscending
+          ? a.isFavorite.toString().compareTo(b.isFavorite.toString())
+          : b.isFavorite.toString().compareTo(a.isFavorite.toString()));
+    }
+    validatorController.add(null);
   }
 }

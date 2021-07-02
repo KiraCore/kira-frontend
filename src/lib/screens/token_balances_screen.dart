@@ -34,7 +34,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   List<String> faucetTokens = [];
   bool isNetworkHealthy = false;
   int sortIndex = 0;
-  bool isAscending = false;
+  bool isAscending = true;
   bool isLoggedIn = false;
   TextEditingController searchController;
   Account explorerAccount;
@@ -58,6 +58,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   String expandedHash;
   String lastTxHash;
   int page = 1;
+  StreamController transactionsController = StreamController.broadcast();
 
   var apiUrl;
   var isSearchFinished = false;
@@ -206,7 +207,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
     }
 
     if (!isValidAddress) {
-      await getValidators(false);
+      await getValidators();
       if (filteredValidators.isNotEmpty) {
         this.navigate2NetworkScreen();
         this.isSearchFinished = true;
@@ -251,10 +252,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
     }
   }
 
-  getValidators(bool loadNew) async {
-    await networkService.getValidators(loadNew);
-    if (networkService.totalCount > networkService.validators.length)
-      getValidators(false);
+  getValidators() async {
+    await networkService.getValidators();
     if (mounted) {
       setState(() {
         var temp = networkService.validators;
@@ -713,6 +712,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
             onTapRow: (hash) => this.setState(() {
               expandedHash = hash;
             }),
+            controller: transactionsController,
           )
         ],
       ));
@@ -779,25 +779,24 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   }
 
   refreshTableSort() {
-    this.setState(() {
-      if (sortIndex == 0) {
-        depositTrx.sort((a, b) => isAscending ? a.hash.compareTo(b.hash) : b.hash.compareTo(a.hash));
-        withdrawTrx.sort((a, b) => isAscending ? a.hash.compareTo(b.hash) : b.hash.compareTo(a.hash));
-        tokens.sort((a, b) => isAscending ? a.assetName.compareTo(b.assetName) : b.assetName.compareTo(a.assetName));
-      } else if (sortIndex == 1) {
-        depositTrx.sort((a, b) => isAscending ? a.sender.compareTo(b.sender) : b.sender.compareTo(a.sender));
-        withdrawTrx.sort((a, b) => isAscending ? a.recipient.compareTo(b.recipient) : b.sender.compareTo(a.recipient));
-        tokens.sort((a, b) => isAscending ? a.balance.compareTo(b.balance) : b.balance.compareTo(a.balance));
-      } else if (sortIndex == 2) {
-        depositTrx.sort((a, b) => isAscending ? a.amount.compareTo(b.amount) : b.amount.compareTo(a.amount));
-        withdrawTrx.sort((a, b) => isAscending ? a.amount.compareTo(b.amount) : b.amount.compareTo(a.amount));
-      } else if (sortIndex == 3) {
-        depositTrx.sort((a, b) => isAscending ? a.time.compareTo(b.time) : b.time.compareTo(a.time));
-        withdrawTrx.sort((a, b) => isAscending ? a.time.compareTo(b.time) : b.time.compareTo(a.time));
-      } else {
-        depositTrx.sort((a, b) => isAscending ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
-        withdrawTrx.sort((a, b) => isAscending ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
-      }
-    });
+    if (sortIndex == 0) {
+      depositTrx.sort((a, b) => isAscending ? a.hash.compareTo(b.hash) : b.hash.compareTo(a.hash));
+      withdrawTrx.sort((a, b) => isAscending ? a.hash.compareTo(b.hash) : b.hash.compareTo(a.hash));
+      tokens.sort((a, b) => isAscending ? a.assetName.compareTo(b.assetName) : b.assetName.compareTo(a.assetName));
+    } else if (sortIndex == 1) {
+      depositTrx.sort((a, b) => isAscending ? a.sender.compareTo(b.sender) : b.sender.compareTo(a.sender));
+      withdrawTrx.sort((a, b) => isAscending ? a.recipient.compareTo(b.recipient) : b.sender.compareTo(a.recipient));
+      tokens.sort((a, b) => isAscending ? a.balance.compareTo(b.balance) : b.balance.compareTo(a.balance));
+    } else if (sortIndex == 2) {
+      depositTrx.sort((a, b) => isAscending ? a.amount.compareTo(b.amount) : b.amount.compareTo(a.amount));
+      withdrawTrx.sort((a, b) => isAscending ? a.amount.compareTo(b.amount) : b.amount.compareTo(a.amount));
+    } else if (sortIndex == 3) {
+      depositTrx.sort((a, b) => isAscending ? a.time.compareTo(b.time) : b.time.compareTo(a.time));
+      withdrawTrx.sort((a, b) => isAscending ? a.time.compareTo(b.time) : b.time.compareTo(a.time));
+    } else {
+      depositTrx.sort((a, b) => isAscending ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
+      withdrawTrx.sort((a, b) => isAscending ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
+    }
+    transactionsController.add(null);
   }
 }
