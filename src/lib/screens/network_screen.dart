@@ -27,7 +27,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
   List<String> favoriteValidators = [];
   int expandedTop = -1;
   int sortIndex = 0;
-  bool isAscending = false;
+  bool isAscending = true;
   bool isNetworkHealthy = false;
   int page = 1;
   StreamController validatorController = StreamController.broadcast();

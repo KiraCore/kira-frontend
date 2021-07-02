@@ -34,6 +34,7 @@ class _DepositScreenState extends State<DepositScreen> {
   FocusNode depositNode;
   TextEditingController depositController;
   int page = 1;
+  StreamController transactionsController = StreamController.broadcast();
 
   @override
   void initState() {
@@ -426,6 +427,7 @@ class _DepositScreenState extends State<DepositScreen> {
               onTapRow: (hash) => this.setState(() {
                 expandedHash = hash;
               }),
+              controller: transactionsController,
             )
           ],
         ));

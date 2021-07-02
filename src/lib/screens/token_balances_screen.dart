@@ -34,7 +34,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
   List<String> faucetTokens = [];
   bool isNetworkHealthy = false;
   int sortIndex = 0;
-  bool isAscending = false;
+  bool isAscending = true;
   bool isLoggedIn = false;
   TextEditingController searchController;
   Account explorerAccount;
