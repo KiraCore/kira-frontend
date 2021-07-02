@@ -45,7 +45,7 @@ class Transaction {
   String get getReducedSender => sender.replaceRange(7, sender.length - 7, '....');
   String get getReducedRecipient => recipient.replaceRange(7, sender.length - 7, '....');
   String get getAmount => this.amount + ' ' + this.token;
-  String get getTimeString => time.relative(appendIfAfter: 'ago');
+  String get getTimeString => time != null ? time.relative(appendIfAfter: 'ago') : "";
 
   Color getStatusColor() {
     switch (status) {

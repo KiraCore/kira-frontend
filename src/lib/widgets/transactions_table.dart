@@ -42,19 +42,17 @@ class _TransactionsTableState extends State<TransactionsTable> {
 
   setPage({int newPage = 0}) {
     if (!mounted) return;
-    if (newPage > 0)
-      widget.setPage(newPage);
+    if (newPage > 0) widget.setPage(newPage);
     var page = newPage == 0 ? widget.page : newPage;
     this.setState(() {
       startAt = page * 5 - 5;
       endAt = startAt + PAGE_COUNT;
 
       currentTransactions = [];
-      if (widget.transactions.length > startAt)
+      if (widget.transactions.isNotEmpty && widget.transactions.length > startAt)
         currentTransactions = widget.transactions.sublist(startAt, min(endAt, widget.transactions.length));
     });
-    if (newPage > 0)
-      refreshExpandStatus();
+    if (newPage > 0) refreshExpandStatus();
   }
 
   @override
@@ -66,12 +64,10 @@ class _TransactionsTableState extends State<TransactionsTable> {
                   iconColor: KiraColors.white,
                   useInkWell: true,
                 ),
-                child: Column(
-                    children: <Widget>[
-                      addNavigateControls(),
-                      ...currentTransactions
-                          .map((transaction) =>
-                          ExpandableNotifier(
+                child: Column(children: <Widget>[
+                  addNavigateControls(),
+                  ...currentTransactions
+                      .map((transaction) => ExpandableNotifier(
                             child: ScrollOnExpand(
                               scrollOnExpand: true,
                               scrollOnCollapse: false,
@@ -90,14 +86,13 @@ class _TransactionsTableState extends State<TransactionsTable> {
                                 ),
                               ),
                             ),
-                          )
-                      ).toList(),
-                    ])
-            )));
+                          ))
+                      .toList(),
+                ]))));
   }
 
   Widget addNavigateControls() {
-    var totalPages = (widget.transactions.length / PAGE_COUNT).ceil();
+    var totalPages = widget.transactions.isNotEmpty ? (widget.transactions.length / PAGE_COUNT).ceil() : 1;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -111,14 +106,12 @@ class _TransactionsTableState extends State<TransactionsTable> {
             color: widget.page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
           ),
         ),
-        Text("${widget.page} / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
+        Text("${widget.page} / $totalPages",
+            style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
         IconButton(
           onPressed: widget.page < totalPages ? () => setPage(newPage: widget.page + 1) : null,
-          icon: Icon(
-              Icons.arrow_forward_ios,
-              size: 20,
-              color: widget.page < totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)
-          ),
+          icon: Icon(Icons.arrow_forward_ios,
+              size: 20, color: widget.page < totalPages ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2)),
         ),
       ],
     );
@@ -134,101 +127,87 @@ class _TransactionsTableState extends State<TransactionsTable> {
   }
 
   Widget addRowHeader(Transaction transaction) {
-    return Builder(
-        builder: (context) {
-          var controller = ExpandableController.of(context);
-          controllers[currentTransactions.indexOf(transaction)] = controller;
+    return Builder(builder: (context) {
+      var controller = ExpandableController.of(context);
+      controllers[currentTransactions.indexOf(transaction)] = controller;
 
-          return InkWell(
-              onTap: () {
-                var newExpandHash = transaction.hash != widget.expandedHash ? transaction.hash : '';
-                refreshExpandStatus(newExpandHash: newExpandHash);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(
-                        flex: 2,
-                        child: Align(
-                            child: InkWell(
-                              onTap: () {
-                                copyText(transaction.hash);
-                                showToast(Strings.txHashCopied);
-                              },
-                              child: Text(transaction.getReducedHash,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)
-                              ),
-                            )
-                        )
-                    ),
-                    Expanded(
-                        flex: 2,
-                        child: Align(
-                            child: InkWell(
-                              onTap: () {
-                                copyText(transaction.sender);
-                                showToast(Strings.senderAddressCopied);
-                              },
-                              child: Text(
-                                  widget.isDeposit ? transaction.getReducedSender : transaction.getReducedRecipient,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(color: KiraColors.white
-                                      .withOpacity(0.8), fontSize: 16)
-                              ),
-                            )
-                        )
-                    ),
-                    Expanded(
-                        flex: 1,
-                        child: Text(transaction.getAmount,
+      return InkWell(
+          onTap: () {
+            var newExpandHash = transaction.hash != widget.expandedHash ? transaction.hash : '';
+            refreshExpandStatus(newExpandHash: newExpandHash);
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                    flex: 2,
+                    child: Align(
+                        child: InkWell(
+                      onTap: () {
+                        copyText(transaction.hash);
+                        showToast(Strings.txHashCopied);
+                      },
+                      child: Text(transaction.getReducedHash,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
-                        )
-                    ),
-                    Expanded(
-                        flex: 1,
-                        child: Text(transaction.getTimeString,
-                          textAlign: TextAlign.center, style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))
-                    ),
-                    Expanded(
-                        flex: 1,
-                        child: Container(
-                            decoration: new BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: new Border.all(
-                                color: transaction.getStatusColor().withOpacity(
-                                    0.5),
-                                width: 2,
-                              ),
-                            ),
-                            child: InkWell(
-                              child: Padding(
-                                padding: EdgeInsets.all(2.0),
-                                child: Icon(Icons.circle, size: 12.0,
-                                    color: transaction.getStatusColor()),
-                              ),
-                            ))
-                    ),
-                    ExpandableIcon(
-                      theme: const ExpandableThemeData(
-                        expandIcon: Icons.arrow_right,
-                        collapseIcon: Icons.arrow_drop_down,
-                        iconColor: Colors.white,
-                        iconSize: 28,
-                        iconRotationAngle: pi / 2,
-                        iconPadding: EdgeInsets.only(right: 5),
-                        hasIcon: false,
-                      ),
-                    ),
-                  ],
+                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+                    ))),
+                Expanded(
+                    flex: 2,
+                    child: Align(
+                        child: InkWell(
+                      onTap: () {
+                        copyText(transaction.sender);
+                        showToast(Strings.senderAddressCopied);
+                      },
+                      child: Text(widget.isDeposit ? transaction.getReducedSender : transaction.getReducedRecipient,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+                    ))),
+                Expanded(
+                    flex: 1,
+                    child: Text(
+                      transaction.getAmount,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16),
+                    )),
+                Expanded(
+                    flex: 1,
+                    child: Text(transaction.getTimeString,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16))),
+                Expanded(
+                    flex: 1,
+                    child: Container(
+                        decoration: new BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: new Border.all(
+                            color: transaction.getStatusColor().withOpacity(0.5),
+                            width: 2,
+                          ),
+                        ),
+                        child: InkWell(
+                          child: Padding(
+                            padding: EdgeInsets.all(2.0),
+                            child: Icon(Icons.circle, size: 12.0, color: transaction.getStatusColor()),
+                          ),
+                        ))),
+                ExpandableIcon(
+                  theme: const ExpandableThemeData(
+                    expandIcon: Icons.arrow_right,
+                    collapseIcon: Icons.arrow_drop_down,
+                    iconColor: Colors.white,
+                    iconSize: 28,
+                    iconRotationAngle: pi / 2,
+                    iconPadding: EdgeInsets.only(right: 5),
+                    hasIcon: false,
+                  ),
                 ),
-              )
-          );
-        }
-    );
+              ],
+            ),
+          ));
+    });
   }
 
   Widget addRowBody(Transaction transaction) {
@@ -241,19 +220,16 @@ class _TransactionsTableState extends State<TransactionsTable> {
             children: [
               Container(
                   width: fieldWidth,
-                  child: Text(
-                      "Memo",
+                  child: Text("Memo",
                       textAlign: TextAlign.right,
-                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold)
-                  )
-              ),
+                      style: TextStyle(
+                          color: KiraColors.white.withOpacity(0.8), fontSize: 16, fontWeight: FontWeight.bold))),
               SizedBox(width: 20),
-              Flexible(child: Text(
-                  transaction.memo,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))
-              ),
+              Flexible(
+                  child: Text(transaction.memo,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 14))),
             ],
           ),
         ]));
