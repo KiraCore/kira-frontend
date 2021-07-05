@@ -36,6 +36,8 @@ class StatusService {
     }
 
     var bodyData = json.decode(response.body);
+    if (bodyData == null) return false;
+
     nodeInfo = NodeInfo.fromJson(bodyData['node_info']);
     syncInfo = SyncInfo.fromJson(bodyData['sync_info']);
     validatorInfo = ValidatorInfo.fromJson(bodyData['validator_info']);

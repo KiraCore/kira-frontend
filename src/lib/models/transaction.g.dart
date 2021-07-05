@@ -17,7 +17,7 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) {
     isNew: false,
     gas: json['gas'] as String,
     status: json['status'] as String,
-    time: DateTime.parse(json['time'] ?? DateTime.now().toString()),
+    time: json['time'] != null ? DateTime.parse(json['time'] ?? DateTime.now().toString()) : null,
     // memo: json['memo'] as String
   );
 }

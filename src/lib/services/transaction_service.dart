@@ -55,6 +55,7 @@ class TransactionService {
 
     var response = await http.get(apiUrl[0] + "/$url?account=$bech32Address&&type=all&&max=$max",
         headers: {'Access-Control-Allow-Origin': apiUrl[1]});
+
     Map<String, dynamic> body = jsonDecode(response.body);
 
     for (final hash in body.keys) {
@@ -62,11 +63,15 @@ class TransactionService {
 
       transaction.hash = hash;
       transaction.status = "success";
-      transaction.time = new DateTime.fromMillisecondsSinceEpoch(body[hash]['time'] * 1000);
+      transaction.time = body[hash] != null && body[hash]['time'] > 0
+          ? new DateTime.fromMillisecondsSinceEpoch(body[hash]['time'] * 1000)
+          : new DateTime(0);
+
       var txs = body[hash]['txs'] ?? List.empty();
       if (txs.length == 0) continue;
       transaction.token = txs[0]['denom'];
       transaction.amount = txs[0]['amount'].toString();
+      transaction.action = isWithdrawal == true ? 'Withdraw' : 'Deposit';
 
       if (isWithdrawal == true) {
         transaction.recipient = txs[0]['address'];
@@ -76,6 +81,9 @@ class TransactionService {
 
       transactions.add(transaction);
     }
+
+    print(transactions.length);
+    print(transactions);
     return transactions;
   }
 }

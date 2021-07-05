@@ -22,18 +22,20 @@ class Transaction {
   bool isNew;
 
   Transaction({
-    this.hash,
-    this.action,
-    this.sender,
-    this.recipient,
-    this.token,
-    this.amount,
-    this.isNew,
-    this.gas,
-    this.status,
+    this.hash = "",
+    this.action = "",
+    this.sender = "",
+    this.recipient = "",
+    this.token = "",
+    this.amount = "",
+    this.isNew = false,
+    this.gas = "",
+    this.status = "",
     this.time,
     this.memo = "",
-  });
+  }) {
+    assert(time != null);
+  }
 
   factory Transaction.fromJson(Map<String, dynamic> json) => _$TransactionFromJson(json);
 
