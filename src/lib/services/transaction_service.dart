@@ -18,7 +18,7 @@ class TransactionService {
     transaction.hash = "0x" + body['hash'];
     transaction.gas = body['gas_used'];
     transaction.status = "success";
-    transaction.time = new DateTime.fromMillisecondsSinceEpoch(body[hash]['time'] * 1000);
+    transaction.time = body[hash] != null ? body[hash]['time'] : 0;
 
     for (var events in body['tx_result']['events']) {
       for (var attribute in events['attributes']) {
@@ -63,9 +63,7 @@ class TransactionService {
 
       transaction.hash = hash;
       transaction.status = "success";
-      transaction.time = body[hash] != null && body[hash]['time'] > 0
-          ? new DateTime.fromMillisecondsSinceEpoch(body[hash]['time'] * 1000)
-          : new DateTime(0);
+      transaction.time = body[hash] != null ? body[hash]['time'] : 0;
 
       var txs = body[hash]['txs'] ?? List.empty();
       if (txs.length == 0) continue;

@@ -17,7 +17,7 @@ class Transaction {
   String amount;
   String gas;
   String status;
-  DateTime time;
+  int time;
   String memo;
   bool isNew;
 
@@ -43,11 +43,12 @@ class Transaction {
 
   String toString() => jsonEncode(toJson());
 
-  String get getReducedHash => '0x$hash'.replaceRange(7, hash.length - 3, '....');
-  String get getReducedSender => sender.replaceRange(7, sender.length - 7, '....');
-  String get getReducedRecipient => recipient.replaceRange(7, sender.length - 7, '....');
+  String get getReducedHash => hash.length > 7 ? hash.replaceRange(7, hash.length - 3, '....') : hash;
+  String get getReducedSender => sender.length > 7 ? sender.replaceRange(7, sender.length - 7, '....') : sender;
+  String get getReducedRecipient =>
+      recipient.length > 7 ? recipient.replaceRange(7, recipient.length - 7, '....') : recipient;
   String get getAmount => this.amount + ' ' + this.token;
-  String get getTimeString => time != null ? time.relative(appendIfAfter: 'ago') : "";
+  String get getTimeString => this.time.toString();
 
   Color getStatusColor() {
     switch (status) {
