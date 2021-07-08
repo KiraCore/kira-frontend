@@ -34,7 +34,7 @@ class Transaction {
     this.time,
     this.memo = "",
   }) {
-    assert(time != null);
+    // assert(time != null);
   }
 
   factory Transaction.fromJson(Map<String, dynamic> json) => _$TransactionFromJson(json);

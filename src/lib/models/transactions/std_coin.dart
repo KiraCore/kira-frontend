@@ -21,8 +21,7 @@ class StdCoin extends Equatable {
   @override
   List<Object> get props => [denom, amount];
 
-  factory StdCoin.fromJson(Map<String, dynamic> json) =>
-      _$StdCoinFromJson(json);
+  factory StdCoin.fromJson(Map<String, dynamic> json) => _$StdCoinFromJson(json);
 
   Map<String, dynamic> toJson() => _$StdCoinToJson(this);
 }

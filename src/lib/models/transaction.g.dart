@@ -18,7 +18,7 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) {
     gas: json['gas'] as String,
     status: json['status'] as String,
     time: json['time'] != null ? DateTime.parse(json['time'] ?? DateTime.now().toString()) : null,
-    // memo: json['memo'] as String
+    memo: json['memo'] as String,
   );
 }
 
@@ -31,6 +31,7 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) => <String, dynam
       'amount': instance.amount,
       'gas': instance.gas,
       'status': instance.status,
-      'time': instance.time,
-      // 'memo': instance.memo,
+      'time': instance.time.runtimeType == DateTime ? instance.time.toString() : instance.time,
+      'isNew': instance.isNew,
+      'memo': instance.memo,
     };

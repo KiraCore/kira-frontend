@@ -40,10 +40,7 @@ class MsgVote {
   }
 
   Map<String, dynamic> toEncodeJson() {
-    Map<String, dynamic> response = {
-      'type': "kiraHub/MsgVoteProposal",
-      'value': _$MsgVoteToJson(this)
-    };
+    Map<String, dynamic> response = {'type': "kiraHub/MsgVoteProposal", 'value': _$MsgVoteToJson(this)};
     return response;
   }
 

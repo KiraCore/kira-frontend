@@ -104,6 +104,7 @@ Future<int> getExpireTime() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getInt('expireTime');
 }
+
 Future<String> getExplorerAddress() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getString('explorerAddress');
@@ -113,6 +114,7 @@ Future setExplorerAddress(String explorerAddress) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setString('explorerAddress', explorerAddress);
 }
+
 Future<String> getInterxRPCUrl() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getString('interxRPC');
@@ -242,8 +244,9 @@ Future<List<BlockTransaction>> getTransactionsForHeight(int height) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var txStrings = prefs.getString('tx_for_block_$height');
   try {
-    return (jsonDecode(txStrings) as List<dynamic>).map((e) =>
-        BlockTransaction.fromJson(jsonDecode(e.toString()) as Map<String, dynamic>)).toList();
+    return (jsonDecode(txStrings) as List<dynamic>)
+        .map((e) => BlockTransaction.fromJson(jsonDecode(e.toString()) as Map<String, dynamic>))
+        .toList();
   } catch (_) {
     return List.empty();
   }

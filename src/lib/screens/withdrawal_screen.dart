@@ -130,6 +130,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
       List<Transaction> wTxs =
           await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: true);
 
+      print(wTxs);
       setState(() {
         transactions = wTxs;
         initialFetched = true;

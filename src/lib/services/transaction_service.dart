@@ -82,8 +82,6 @@ class TransactionService {
       transactions.add(transaction);
     }
 
-    print(transactions.length);
-    print(transactions);
     return transactions;
   }
 }
