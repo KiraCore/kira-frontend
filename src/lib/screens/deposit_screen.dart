@@ -89,7 +89,7 @@ class _DepositScreenState extends State<DepositScreen> {
   getDepositTransactions() async {
     if (currentAccount != null) {
       List<Transaction> wTxs =
-        await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: false);
+          await transactionService.getTransactions(account: currentAccount, max: 100, isWithdrawal: false);
 
       setState(() {
         initialFetched = true;
@@ -133,13 +133,15 @@ class _DepositScreenState extends State<DepositScreen> {
                             addHeaderTitle(),
                             if (currentAccount != null) addGravatar(context),
                             ResponsiveWidget.isSmallScreen(context) ? addInformationSmall() : addInformationBig(),
-                            addTableHeader(),
-                            !initialFetched ? addLoadingIndicator() : transactions.isEmpty ? Container(
-                                margin: EdgeInsets.only(top: 20, left: 20),
-                                child: Text("No deposit transactions to show",
-                                    style: TextStyle(
-                                        color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
-                            : addTransactionsTable(),
+                            !initialFetched
+                                ? addLoadingIndicator()
+                                : transactions.isEmpty
+                                    ? Container(
+                                        margin: EdgeInsets.only(top: 20, left: 20),
+                                        child: Text("No deposit transactions to show",
+                                            style: TextStyle(
+                                                color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                    : addTransactionsTable(),
                           ],
                         ),
                       )));
@@ -168,47 +170,6 @@ class _DepositScreenState extends State<DepositScreen> {
           textAlign: TextAlign.left,
           style: TextStyle(color: KiraColors.white, fontSize: 30, fontWeight: FontWeight.w900),
         ));
-  }
-
-  Widget addTableHeader() {
-    return Container(
-      padding: EdgeInsets.all(5),
-      margin: EdgeInsets.only(right: 40, bottom: 20),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text("Tx Hash",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text("Sender",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text("Amount",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text("Time",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text("Status",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget availableNetworks() {
@@ -343,7 +304,7 @@ class _DepositScreenState extends State<DepositScreen> {
     // final String gravatar = gravatarService.getIdenticon(currentAccount != null ? currentAccount.bech32Address : "");
 
     final String reducedAddress =
-    currentAccount.bech32Address.replaceRange(10, currentAccount.bech32Address.length - 7, '....');
+        currentAccount.bech32Address.replaceRange(10, currentAccount.bech32Address.length - 7, '....');
 
     return Container(
         margin: EdgeInsets.only(bottom: 30),
@@ -354,11 +315,11 @@ class _DepositScreenState extends State<DepositScreen> {
             InkWell(
               onTap: () {
                 FlutterClipboard.copy(currentAccount.bech32Address).then((value) => {
-                  setState(() {
-                    copied1 = !copied1;
-                  }),
-                  if (copied1 == true) {autoPress()}
-                });
+                      setState(() {
+                        copied1 = !copied1;
+                      }),
+                      if (copied1 == true) {autoPress()}
+                    });
               },
               borderRadius: BorderRadius.circular(500),
               onHighlightChanged: (value) {},

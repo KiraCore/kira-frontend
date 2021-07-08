@@ -48,7 +48,7 @@ class Transaction {
   String get getReducedRecipient =>
       recipient.length > 7 ? recipient.replaceRange(7, recipient.length - 7, '....') : recipient;
   String get getAmount => this.amount + ' ' + this.token;
-  String get getTimeString => this.time.toString();
+  String get getTimeString => new DateTime.fromMillisecondsSinceEpoch(this.time * 1000).relative(appendIfAfter: 'ago');
 
   Color getStatusColor() {
     switch (status) {
