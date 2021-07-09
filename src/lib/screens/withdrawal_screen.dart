@@ -559,7 +559,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                 ),
                 SizedBox(height: 5),
                 Text(
-                  "${transactionResult}",
+                  "$transactionResult",
                   textAlign: TextAlign.left,
                   style: TextStyle(fontSize: 18, color: KiraColors.black),
                 ),
@@ -821,6 +821,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            addTableHeader(),
             TransactionsTable(
               page: page,
               setPage: (newPage) => this.setState(() {
@@ -1031,6 +1032,47 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             SizedBox(width: 60),
             Expanded(child: addMemo(), flex: 1),
           ]),
+    );
+  }
+
+  Widget addTableHeader() {
+    return Container(
+      padding: EdgeInsets.all(5),
+      margin: EdgeInsets.only(right: 40, bottom: 15, top: 15),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text("Tx Hash",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text("Recipient",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
+            flex: 1,
+            child: Text("Amount",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
+            flex: 1,
+            child: Text("Time",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
+            flex: 1,
+            child: Text("Status",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
     );
   }
 }

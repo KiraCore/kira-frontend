@@ -35,7 +35,7 @@ class Transaction {
     this.status = "",
     this.time,
     this.memo = "",
-  }) {}
+  });
 
   factory Transaction.fromJson(Map<String, dynamic> json) => _$TransactionFromJson(json);
 

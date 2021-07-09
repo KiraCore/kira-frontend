@@ -218,6 +218,8 @@ class TokenTableState extends State<TokenTable> {
   Widget addRowBody(Token token) {
     final fieldWidth = ResponsiveWidget.isSmallScreen(context) ? 100.0 : 150.0;
 
+    return Container();
+
     return Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50),
         child: Column(children: [

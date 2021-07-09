@@ -70,7 +70,6 @@ class _TransactionsTableState extends State<TransactionsTable> {
                 ),
                 child: Column(children: <Widget>[
                   addNavigateControls(),
-                  addTableHeader(),
                   ...currentTransactions
                       .map((transaction) => ExpandableNotifier(
                     child: ScrollOnExpand(
@@ -129,47 +128,6 @@ class _TransactionsTableState extends State<TransactionsTable> {
         controllers[index].expanded = transaction.hash == newExpandHash;
       });
     });
-  }
-
-  Widget addTableHeader() {
-    return Container(
-      padding: EdgeInsets.all(5),
-      margin: EdgeInsets.only(right: 40, bottom: 15, top: 15),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text("Tx Hash",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text(widget.isDeposit ? "Sender" : "Recipient",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text("Amount",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text("Time",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text("Status",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget addRowHeader(Transaction transaction) {
