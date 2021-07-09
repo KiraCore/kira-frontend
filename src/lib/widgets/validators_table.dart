@@ -38,16 +38,18 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
   int startAt = 0;
   int endAt;
   List<Validator> currentValidators = <Validator>[];
+  String query;
 
   @override
   void initState() {
     super.initState();
 
-    setPage();
-    widget.controller.stream.listen((_) => setPage());
+    setPage("");
+    widget.controller.stream.listen((newQuery) => setPage(newQuery));
   }
 
-  setPage({int newPage = 0}) {
+  setPage(String newQuery, {int newPage = 0}) {
+    query = newQuery;
     if (newPage > 0)
       widget.setPage(newPage);
     var page = newPage == 0 ? widget.page : newPage;
@@ -56,8 +58,10 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
       endAt = startAt + PAGE_COUNT;
 
       currentValidators = [];
-      if (widget.validators.length > startAt)
-        currentValidators = widget.validators.sublist(startAt, min(endAt, widget.validators.length));
+      var validators = query.isEmpty ? widget.validators : widget.validators.where((x) =>
+        x.moniker.toLowerCase().contains(query) || x.address.toLowerCase().contains(query)).toList();
+      if (validators.length > startAt)
+        currentValidators = validators.sublist(startAt, min(endAt, validators.length));
     });
     if (newPage > 0)
       refreshExpandStatus();
@@ -103,23 +107,25 @@ class _ValidatorsTableState extends State<ValidatorsTable> {
   }
 
   Widget addNavigateControls() {
-    var totalPages = (widget.validators.length / PAGE_COUNT).ceil();
+    var validators = query.isEmpty ? widget.validators : widget.validators.where((x) =>
+      x.moniker.toLowerCase().contains(query) || x.address.toLowerCase().contains(query)).toList();
+    var totalPages = (validators.length / PAGE_COUNT).ceil();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         IconButton(
-          onPressed: widget.page > 1 ? () => setPage(newPage: widget.page - 1) : null,
+          onPressed: widget.page > 1 ? () => setPage(query, newPage: widget.page - 1) : null,
           icon: Icon(
             Icons.arrow_back_ios,
             size: 20,
             color: widget.page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
           ),
         ),
-        Text("${widget.page} / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
+        Text("${min(widget.page, totalPages)} / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
         IconButton(
-          onPressed: widget.page < totalPages ? () => setPage(newPage: widget.page + 1) : null,
+          onPressed: widget.page < totalPages ? () => setPage(query, newPage: widget.page + 1) : null,
           icon: Icon(
               Icons.arrow_forward_ios,
               size: 20,

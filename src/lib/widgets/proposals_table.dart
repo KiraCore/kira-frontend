@@ -50,16 +50,18 @@ class _ProposalsTableState extends State<ProposalsTable> {
   int startAt;
   int endAt;
   List<Proposal> currentProposals = <Proposal>[];
+  String query;
 
   @override
   void initState() {
     super.initState();
 
-    setPage();
-    widget.controller.stream.listen((_) => setPage());
+    setPage("");
+    widget.controller.stream.listen((newQuery) => setPage(newQuery));
   }
 
-  setPage({int newPage = 0}) {
+  setPage(String newQuery, {int newPage = 0}) {
+    query = newQuery;
     if (!mounted) return;
     if (newPage > 0)
       widget.setPage(newPage);
@@ -69,9 +71,11 @@ class _ProposalsTableState extends State<ProposalsTable> {
       endAt = startAt + PAGE_COUNT;
 
       currentProposals = [];
-      if (widget.proposals.length > startAt)
-        currentProposals = widget.proposals.sublist(startAt, min(endAt, widget.proposals.length));
-      if (currentProposals.length < PAGE_COUNT && (widget.proposals.length / PAGE_COUNT).ceil() < widget.totalPages)
+      var proposals = query.isEmpty ? widget.proposals : widget.proposals.where((x) => x.proposalId == query ||
+          x.content.getName().toLowerCase().contains(query) || x.getStatusString().toLowerCase().contains(query)).toList();
+      if (proposals.length > startAt)
+        currentProposals = proposals.sublist(startAt, min(endAt, proposals.length));
+      if (currentProposals.length < PAGE_COUNT && (proposals.length / PAGE_COUNT).ceil() < widget.totalPages)
         widget.loadMore();
     });
     if (newPage > 0)
@@ -118,23 +122,25 @@ class _ProposalsTableState extends State<ProposalsTable> {
   }
 
   Widget addNavigateControls() {
-    var totalPages = widget.isFiltering ? (widget.proposals.length / PAGE_COUNT).ceil() : widget.totalPages;
+    var proposals = query.isEmpty ? widget.proposals : widget.proposals.where((x) => x.proposalId == query ||
+        x.content.getName().toLowerCase().contains(query) || x.getStatusString().toLowerCase().contains(query)).toList();
+    var totalPages = widget.isFiltering ? (proposals.length / PAGE_COUNT).ceil() : widget.totalPages;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         IconButton(
-          onPressed: widget.page > 1 ? () => setPage(newPage: widget.page - 1) : null,
+          onPressed: widget.page > 1 ? () => setPage(query, newPage: widget.page - 1) : null,
           icon: Icon(
             Icons.arrow_back_ios,
             size: 20,
             color: widget.page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
           ),
         ),
-        Text("${widget.page} / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
+        Text("${min(widget.page, totalPages)} / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
         IconButton(
-          onPressed: widget.page < totalPages ? () => setPage(newPage: widget.page + 1) : null,
+          onPressed: widget.page < totalPages ? () => setPage(query, newPage: widget.page + 1) : null,
           icon: Icon(
               Icons.arrow_forward_ios,
               size: 20,

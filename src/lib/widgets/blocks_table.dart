@@ -123,7 +123,7 @@ class _BlocksTableState extends State<BlocksTable> {
             color: widget.page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
           ),
         ),
-        Text("${widget.page} / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
+        Text("${min(widget.page, totalPages)} / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
         IconButton(
           onPressed: widget.page < totalPages ? () => setPage(newPage: widget.page + 1) : null,
           icon: Icon(

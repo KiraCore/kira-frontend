@@ -220,15 +220,12 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                                 ? addWithdrawalAmountSmall(context)
                                 : addWithdrawalAmountBig(context),
                             // if (loading == true) addLoadingIndicator(),
-                            !initialFetched
-                                ? addLoadingIndicator()
-                                : transactions.isEmpty
-                                    ? Container(
-                                        margin: EdgeInsets.only(top: 20, left: 20),
-                                        child: Text("No deposit transactions to show",
-                                            style: TextStyle(
-                                                color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
-                                    : addTransactionsTable(),
+                            !initialFetched ? addLoadingIndicator() : transactions.isEmpty ? Container(
+                                margin: EdgeInsets.only(top: 20, left: 20),
+                                child: Text("No withdrawal transactions to show",
+                                    style: TextStyle(
+                                        color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
+                                : addTransactionsTable(),
                           ],
                         )),
                   ));

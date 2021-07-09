@@ -25,7 +25,6 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
   ProposalService proposalService = ProposalService();
   StatusService statusService = StatusService();
   List<Proposal> proposals = [];
-  List<Proposal> filteredProposals = [];
   List<int> voteable = [0, 2];
   String pendingTxHash;
   String cancelAccountNumber;
@@ -79,11 +78,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
       if (params.containsKey("info"))
         keyword = params['info'].toLowerCase();
 
-      filteredProposals.clear();
-      filteredProposals.addAll(keyword.isEmpty ? proposals : proposals.where((x) =>
-      x.proposalId.contains(keyword) || x.content.getName().toLowerCase().contains(keyword) ||
-          x.getStatusString().toLowerCase().contains(keyword)));
-      proposalController.add(null);
+      proposalController.add(keyword);
     });
   }
 
@@ -145,7 +140,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                           children: <Widget>[
                             addHeader(),
                             addTableHeader(),
-                            moreLoading ? addLoadingIndicator() : filteredProposals.isEmpty ? Container(
+                            moreLoading ? addLoadingIndicator() : proposals.isEmpty ? Container(
                                 margin: EdgeInsets.only(top: 20, left: 20),
                                 child: Text("No proposals to show",
                                     style: TextStyle(
@@ -216,10 +211,8 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
           this.setState(() {
             query = newText.toLowerCase();
             expandedId = "";
-            filteredProposals.clear();
-            filteredProposals.addAll(query.isEmpty ? proposals : proposals.where((x) => x.proposalId.contains(query) ||
-                x.content.getName().toLowerCase().contains(query) || x.getStatusString().toLowerCase().contains(query)));
-            proposalController.add(null);
+            page = 1;
+            proposalController.add(query);
           });
         },
         padding: EdgeInsets.only(bottom: 15),
@@ -282,7 +275,7 @@ class _ProposalsScreenState extends State<ProposalsScreen> {
                 page = newPage;
               }),
               isFiltering: query.isNotEmpty,
-              proposals: filteredProposals,
+              proposals: proposals,
               voteable: voteable,
               expandedId: expandedId,
               onTapRow: (id) => this.setState(() {
