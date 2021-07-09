@@ -17,7 +17,7 @@ class TransactionService {
 
     transaction.hash = "0x" + body['hash'];
     transaction.gas = body['gas_used'];
-    transaction.status = "success";
+    transaction.status = "confirmed";
     transaction.time = body[hash] != null ? body[hash]['time'] : 0;
 
     for (var events in body['tx_result']['events']) {
@@ -91,6 +91,7 @@ class TransactionService {
       transaction.hash = "-";
       transaction.status = 'unconfirmed';
       transaction.memo = tx['memo'];
+      transaction.gas = tx['gas'];
 
       transactions.add(transaction);
     }
