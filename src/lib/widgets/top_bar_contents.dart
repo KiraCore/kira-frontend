@@ -28,6 +28,7 @@ class _TopBarContentsState extends State<TopBarContents> {
   bool _isProcessing = false;
   String networkId = Strings.noAvailableNetworks;
   int selectedIndex = 0;
+  String navParam = "";
 
   @override
   void initState() {
@@ -36,6 +37,9 @@ class _TopBarContentsState extends State<TopBarContents> {
   }
 
   void getNodeStatus() async {
+    String lastSearchedAccount = await getLastSearchedAccount();
+    if (lastSearchedAccount.isNotEmpty)
+      navParam = "&addr=" + lastSearchedAccount;
     selectedIndex = await getTopbarIndex();
     await statusService.getNodeStatus();
 
@@ -66,8 +70,8 @@ class _TopBarContentsState extends State<TopBarContents> {
             onTap: () {
               setTopbarIndex(i);
               switch (i) {
-                case 0: // Acount
-                  Navigator.pushReplacementNamed(context, '/account' + (!widget._loggedIn ? '?rpc=${statusService.rpcUrl}' : ''));
+                case 0: // Account
+                  Navigator.pushReplacementNamed(context, '/account' + (!widget._loggedIn ? '?rpc=${statusService.rpcUrl}$navParam' : ''));
                   break;
                 case 1: // Deposit
                   Navigator.pushReplacementNamed(context, '/deposit');

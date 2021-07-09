@@ -25,16 +25,24 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
 
   // String networkId = Strings.noAvailableNetworks;
 
+  String navParam = "";
   bool isLoggedIn = false;
 
   @override
   void initState() {
     super.initState();
 
-    statusService.getNodeStatus();
+    getNodeStatus();
     getLoginStatus().then((loggedIn) => this.setState(() {
       isLoggedIn = loggedIn;
     }));
+  }
+
+  void getNodeStatus() async {
+    await statusService.getNodeStatus();
+    String lastSearchedAccount = await getLastSearchedAccount();
+    if (lastSearchedAccount.isNotEmpty)
+      navParam = "&addr=" + lastSearchedAccount;
   }
 
   List<Widget> navItems() {
@@ -52,7 +60,7 @@ class _HamburgerDrawerState extends State<HamburgerDrawer> {
           onTap: () {
             switch (i) {
               case 0: // account
-                Navigator.pushReplacementNamed(context, '/account' + (!isLoggedIn ? '?rpc=${statusService.rpcUrl}' : ''));
+                Navigator.pushReplacementNamed(context, '/account' + (!isLoggedIn ? '?rpc=${statusService.rpcUrl}$navParam' : ''));
                 break;
               case 1: // Deposit
                 Navigator.pushReplacementNamed(context, '/deposit');

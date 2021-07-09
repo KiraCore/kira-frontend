@@ -333,6 +333,7 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
       getLoginStatus().then((loggedIn) {
         isLoggedIn = loggedIn;
         if(isLoggedIn) {
+          setLastSearchedAccount("");
           setState(() {
             checkPasswordExpired().then((success) {
               if (success) {
@@ -387,7 +388,8 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
                     isValidAddress ? Wrap(children: tabItems()) : Container(),
                     isValidAddress && tabType == 0 ? Align(alignment: Alignment.center, child: qrCode()) : Container(),
                     (isLoggedIn || isValidAddress) ? addTableHeader() : Container(),
-                    isValidAddress && tabType < 2 ? addTransactionsTable() : Container(),
+                    isValidAddress && tabType == 0 ? addDepositTransactionsTable() : Container(),
+                    isValidAddress && tabType == 1 ? addWithdrawalTransactionsTable() : Container(),
                     (isLoggedIn || (isValidAddress && tabType == 2)) ? (tokens.isEmpty)
                       ? Container(
                         margin: EdgeInsets.only(top: 20, left: 20),
@@ -654,12 +656,15 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
             });
           },
           onTap: () {
-            this.tabType = i;
-            sortIndex = 0;
-            isAscending = true;
-            lastTxHash = '';
-            setTabIndex(this.tabType);
-            showSearchedAccount();
+            this.setState(() {
+              this.tabType = i;
+              page = 1;
+              sortIndex = 0;
+              isAscending = true;
+              lastTxHash = '';
+              setTabIndex(this.tabType);
+              showSearchedAccount();
+            });
           },
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -694,28 +699,41 @@ class _TokenBalanceScreenState extends State<TokenBalanceScreen> {
     return items;
   }
 
-  Widget addTransactionsTable() {
+  Widget addDepositTransactionsTable() {
     return Container(
       margin: EdgeInsets.only(bottom: 50),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TransactionsTable(
-            page: page,
-            setPage: (newPage) => this.setState(() {
-              page = newPage;
-            }),
-            isDeposit: tabType == 0,
-            transactions: tabType == 0 ? depositTrx : withdrawTrx,
-            expandedHash: expandedHash,
-            onTapRow: (hash) => this.setState(() {
-              expandedHash = hash;
-            }),
-            controller: transactionsController,
-          )
-        ],
+      child: TransactionsTable(
+        page: page,
+        setPage: (newPage) => this.setState(() {
+          page = newPage;
+        }),
+        isDeposit: true,
+        transactions: depositTrx,
+        expandedHash: expandedHash,
+        onTapRow: (hash) => this.setState(() {
+          expandedHash = hash;
+        }),
+        controller: transactionsController,
       ));
+  }
+
+
+  Widget addWithdrawalTransactionsTable() {
+    return Container(
+        margin: EdgeInsets.only(bottom: 50),
+        child: TransactionsTable(
+          page: page,
+          setPage: (newPage) => this.setState(() {
+            page = newPage;
+          }),
+          isDeposit: false,
+          transactions: withdrawTrx,
+          expandedHash: expandedHash,
+          onTapRow: (hash) => this.setState(() {
+            expandedHash = hash;
+          }),
+          controller: transactionsController,
+        ));
   }
 
   Widget addTableHeader() {

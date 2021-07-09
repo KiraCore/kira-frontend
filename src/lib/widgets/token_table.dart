@@ -135,7 +135,7 @@ class TokenTableState extends State<TokenTable> {
             color: widget.page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
           ),
         ),
-        Text("${widget.page} / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
+        Text("${min(widget.page, totalPages)} / $totalPages", style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
         IconButton(
           onPressed: widget.page < totalPages ? () => setPage(newPage: widget.page + 1) : null,
           icon: Icon(
@@ -217,6 +217,8 @@ class TokenTableState extends State<TokenTable> {
 
   Widget addRowBody(Token token) {
     final fieldWidth = ResponsiveWidget.isSmallScreen(context) ? 100.0 : 150.0;
+
+    return Container();
 
     return Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50),

@@ -20,7 +20,6 @@ class _NetworkScreenState extends State<NetworkScreen> {
   NetworkService networkService = NetworkService();
   StatusService statusService = StatusService();
   List<Validator> validators = [];
-  List<Validator> filteredValidators = [];
   String query = "";
   bool moreLoading = false;
 
@@ -109,15 +108,11 @@ class _NetworkScreenState extends State<NetworkScreen> {
         var uri = Uri.dataFromString(html.window.location.href);
         Map<String, String> params = uri.queryParameters;
 
-        filteredValidators.clear();
         var keyword = query;
         if (params.containsKey("info"))
           keyword = params['info'].toLowerCase();
 
-        filteredValidators.addAll(keyword.isEmpty ? validators : validators.where((x) =>
-        x.moniker.toLowerCase().contains(keyword) ||
-            x.address.toLowerCase().contains(keyword)));
-        validatorController.add(null);
+        validatorController.add(keyword);
       });
     }
   }
@@ -179,7 +174,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
                           children: <Widget>[
                             addHeader(),
                             addTableHeader(),
-                            moreLoading ? addLoadingIndicator() : filteredValidators.isEmpty ? Container(
+                            moreLoading ? addLoadingIndicator() : validators.isEmpty ? Container(
                                 margin: EdgeInsets.only(top: 20, left: 20),
                                 child: Text("No validators to show",
                                     style: TextStyle(color: KiraColors.white, fontSize: 18, fontWeight: FontWeight.bold)))
@@ -264,11 +259,9 @@ class _NetworkScreenState extends State<NetworkScreen> {
         onChanged: (String newText) {
           this.setState(() {
             query = newText.toLowerCase();
-            filteredValidators = validators.where((x) =>
-            x.moniker.toLowerCase().contains(query) || x.address.toLowerCase().contains(query))
-                .toList();
             expandedTop = -1;
-            validatorController.add(null);
+            page = 1;
+            validatorController.add(query);
           });
         },
         padding: EdgeInsets.only(bottom: 15),
@@ -416,7 +409,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
               setPage: (newPage) => this.setState(() {
                 page = newPage;
               }),
-              validators: filteredValidators,
+              validators: validators,
               expandedTop: expandedTop,
               onChangeLikes: (top) {
                 var index = validators.indexWhere((element) => element.top == top);
@@ -441,17 +434,17 @@ class _NetworkScreenState extends State<NetworkScreen> {
 
   void refreshTableSort() {
     if (sortIndex == 0) {
-      filteredValidators.sort((a, b) => isAscending ? a.top.compareTo(b.top) : b.top.compareTo(a.top));
+      validators.sort((a, b) => isAscending ? a.top.compareTo(b.top) : b.top.compareTo(a.top));
     } else if (sortIndex == 2) {
-      filteredValidators
+      validators
           .sort((a, b) => isAscending ? a.moniker.compareTo(b.moniker) : b.moniker.compareTo(a.moniker));
     } else if (sortIndex == 3) {
-      filteredValidators.sort((a, b) => isAscending ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
+      validators.sort((a, b) => isAscending ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
     } else if (sortIndex == 4) {
-      filteredValidators.sort((a, b) => !isAscending
+      validators.sort((a, b) => !isAscending
           ? a.isFavorite.toString().compareTo(b.isFavorite.toString())
           : b.isFavorite.toString().compareTo(a.isFavorite.toString()));
     }
-    validatorController.add(null);
+    validatorController.add(query);
   }
 }

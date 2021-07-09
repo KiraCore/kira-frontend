@@ -70,34 +70,33 @@ class _TransactionsTableState extends State<TransactionsTable> {
                 ),
                 child: Column(children: <Widget>[
                   addNavigateControls(),
-                  addTableHeader(),
                   ...currentTransactions
                       .map((transaction) => ExpandableNotifier(
-                            child: ScrollOnExpand(
-                              scrollOnExpand: true,
-                              scrollOnCollapse: false,
-                              child: Card(
-                                clipBehavior: Clip.antiAlias,
-                                color: KiraColors.kBackgroundColor.withOpacity(0.2),
-                                child: ExpandablePanel(
-                                  theme: ExpandableThemeData(
-                                    headerAlignment: ExpandablePanelHeaderAlignment.center,
-                                    tapHeaderToExpand: false,
-                                    hasIcon: false,
-                                  ),
-                                  header: addRowHeader(transaction),
-                                  collapsed: Container(),
-                                  expanded: addRowBody(transaction),
-                                ),
-                              ),
-                            ),
-                          ))
+                    child: ScrollOnExpand(
+                      scrollOnExpand: true,
+                      scrollOnCollapse: false,
+                      child: Card(
+                        clipBehavior: Clip.antiAlias,
+                        color: KiraColors.kBackgroundColor.withOpacity(0.2),
+                        child: ExpandablePanel(
+                          theme: ExpandableThemeData(
+                            headerAlignment: ExpandablePanelHeaderAlignment.center,
+                            tapHeaderToExpand: false,
+                            hasIcon: false,
+                          ),
+                          header: addRowHeader(transaction),
+                          collapsed: Container(),
+                          expanded: addRowBody(transaction),
+                        ),
+                      ),
+                    ),
+                  ))
                       .toList(),
                 ]))));
   }
 
   Widget addNavigateControls() {
-    var totalPages = widget.transactions.isNotEmpty ? (widget.transactions.length / PAGE_COUNT).ceil() : 1;
+    var totalPages = widget.transactions.isNotEmpty ? (widget.transactions.length / PAGE_COUNT).ceil() : 0;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -111,7 +110,7 @@ class _TransactionsTableState extends State<TransactionsTable> {
             color: widget.page > 1 ? KiraColors.white : KiraColors.kGrayColor.withOpacity(0.2),
           ),
         ),
-        Text("${widget.page} / $totalPages",
+        Text("${min(widget.page, totalPages)} / $totalPages",
             style: TextStyle(fontSize: 16, color: KiraColors.white, fontWeight: FontWeight.bold)),
         IconButton(
           onPressed: widget.page < totalPages ? () => setPage(newPage: widget.page + 1) : null,
@@ -129,47 +128,6 @@ class _TransactionsTableState extends State<TransactionsTable> {
         controllers[index].expanded = transaction.hash == newExpandHash;
       });
     });
-  }
-
-  Widget addTableHeader() {
-    return Container(
-      padding: EdgeInsets.all(5),
-      margin: EdgeInsets.only(right: 40, bottom: 15, top: 15),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text("Tx Hash",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text(widget.isDeposit ? "Sender" : "Recipient",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text("Amount",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text("Time",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text("Status",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: KiraColors.kGrayColor, fontSize: 16, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget addRowHeader(Transaction transaction) {
@@ -191,26 +149,26 @@ class _TransactionsTableState extends State<TransactionsTable> {
                     flex: 2,
                     child: Align(
                         child: InkWell(
-                      onTap: () {
-                        copyText(transaction.hash);
-                        showToast(Strings.txHashCopied);
-                      },
-                      child: Text(transaction.getReducedHash,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
-                    ))),
+                          onTap: () {
+                            copyText(transaction.hash);
+                            showToast(Strings.txHashCopied);
+                          },
+                          child: Text(transaction.getReducedHash,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+                        ))),
                 Expanded(
                     flex: 2,
                     child: Align(
                         child: InkWell(
-                      onTap: () {
-                        copyText(transaction.sender);
-                        showToast(Strings.senderAddressCopied);
-                      },
-                      child: Text(widget.isDeposit ? transaction.getReducedSender : transaction.getReducedRecipient,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
-                    ))),
+                          onTap: () {
+                            copyText(widget.isDeposit ? transaction.sender : transaction.recipient);
+                            showToast(Strings.senderAddressCopied);
+                          },
+                          child: Text(widget.isDeposit ? transaction.getReducedSender : transaction.getReducedRecipient,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+                        ))),
                 Expanded(
                     flex: 1,
                     child: Text(
