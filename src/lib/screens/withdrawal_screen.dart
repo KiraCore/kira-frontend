@@ -217,8 +217,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                             ResponsiveWidget.isSmallScreen(context) ? addFirstLineSmall() : addFirstLineBig(),
                             ResponsiveWidget.isSmallScreen(context) ? addSecondLineSmall() : addSecondLineBig(),
                             ResponsiveWidget.isSmallScreen(context)
-                                ? addWithdrawalAmountSmall()
-                                : addWithdrawalAmountBig(),
+                                ? addWithdrawalAmountSmall(context)
+                                : addWithdrawalAmountBig(context),
                             // if (loading == true) addLoadingIndicator(),
                             !initialFetched
                                 ? addLoadingIndicator()
@@ -435,19 +435,19 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
     ]);
   }
 
-  Widget addWithdrawalAmountBig() {
+  Widget addWithdrawalAmountBig(BuildContext context) {
     return Container(
         margin: EdgeInsets.only(bottom: 100),
         child: Column(children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.end, children: [
             ConstrainedBox(constraints: BoxConstraints(maxWidth: 500), child: addWithdrawalAmount()),
-            addWithdrawButton(true),
+            addWithdrawButton(context, true),
           ]),
           addTransactionHashResult()
         ]));
   }
 
-  Widget addWithdrawalAmountSmall() {
+  Widget addWithdrawalAmountSmall(BuildContext context) {
     return Container(
         margin: EdgeInsets.only(bottom: 100),
         child: Column(
@@ -457,7 +457,7 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
               addWithdrawalAmount(),
               addTransactionHashResult(),
               SizedBox(height: 30),
-              addWithdrawButton(false)
+              addWithdrawButton(context, false)
             ]));
   }
 
@@ -531,19 +531,14 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         ));
   }
 
-  showAvailableNetworks(BuildContext context, String networkId, String nodeAddress) {
-    Widget disconnectButton = TextButton(
+  showTransactionStatus(BuildContext context) {
+    Widget cancelButton = TextButton(
       child: Text(
-        Strings.disconnect,
+        Strings.cancel,
         style: TextStyle(fontSize: 16),
         textAlign: TextAlign.center,
       ),
-      onPressed: () {
-        BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(Strings.customNetwork, ""));
-        removePassword();
-        setInterxRPCUrl("");
-        Navigator.pushReplacementNamed(context, '/login');
-      },
+      onPressed: () {},
     );
 
     // show the dialog
@@ -551,56 +546,50 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-            width: 250,
+            width: 450,
             child: CustomDialog(
               contentWidgets: [
                 Text(
-                  Strings.networkInformation,
+                  Strings.txDetails,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 30),
                 Text(
-                  "Connected Network : ",
+                  "Status: ",
                   textAlign: TextAlign.left,
                   style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),
                 Text(
-                  "${networkId[0].toUpperCase()}${networkId.substring(1)}",
+                  "${transactionResult}",
                   textAlign: TextAlign.left,
                   style: TextStyle(fontSize: 18, color: KiraColors.black),
                 ),
                 SizedBox(height: 12),
                 Text(
-                  "RPC Address : ",
+                  "TX Hash : ",
                   textAlign: TextAlign.left,
                   style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),
                 Text(
-                  nodeAddress,
+                  "0x" + transactionHash.toLowerCase(),
                   textAlign: TextAlign.left,
                   style: TextStyle(fontSize: 18, color: KiraColors.black),
-                ),
-                SizedBox(height: 12),
-                Text(
-                  "Network Status : ",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 32),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[disconnectButton]),
+                    children: <Widget>[cancelButton]),
               ],
             ));
       },
     );
   }
 
-  Widget addWithdrawButton(isBig) {
+  Widget addWithdrawButton(BuildContext context, bool isBig) {
     String denomination = currentToken != null ? currentToken.denomination : "";
     return Stack(
       children: [
@@ -677,6 +666,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
               });
               getNewTransaction("0x" + result['hash']);
             }
+
+            showTransactionStatus(context);
           },
         ),
         if (isQREnabled == true)
@@ -805,6 +796,8 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
                           });
                           getNewTransaction("0x" + result['hash']);
                         }
+
+                        showTransactionStatus(context);
                       },
                     )),
               )),
@@ -853,36 +846,36 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         margin: EdgeInsets.only(top: 50),
         child: Column(
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (transactionResult != '')
-                  Container(
-                    alignment: AlignmentDirectional(0, 0),
-                    margin: EdgeInsets.only(bottom: 10),
-                    child: Text(transactionResult,
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          color: transactionResult.contains("success") ? KiraColors.green3 : KiraColors.kYellowColor,
-                          fontFamily: 'NunitoSans',
-                          fontWeight: FontWeight.w600,
-                        )),
-                  ),
-                if (transactionHash != '')
-                  Container(
-                    alignment: AlignmentDirectional(0, 0),
-                    margin: EdgeInsets.only(bottom: 10),
-                    child: Text("0x" + transactionHash.toLowerCase(),
-                        style: TextStyle(
-                          fontSize: 15.0,
-                          color: transactionResult.contains("success") ? KiraColors.green3 : KiraColors.kYellowColor,
-                          fontFamily: 'NunitoSans',
-                          fontWeight: FontWeight.w600,
-                        )),
-                  ),
-              ],
-            ),
+            // Column(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     if (transactionResult != '')
+            //       Container(
+            //         alignment: AlignmentDirectional(0, 0),
+            //         margin: EdgeInsets.only(bottom: 10),
+            //         child: Text(transactionResult,
+            //             style: TextStyle(
+            //               fontSize: 16.0,
+            //               color: transactionResult.contains("success") ? KiraColors.green3 : KiraColors.kYellowColor,
+            //               fontFamily: 'NunitoSans',
+            //               fontWeight: FontWeight.w600,
+            //             )),
+            //       ),
+            //     if (transactionHash != '')
+            //       Container(
+            //         alignment: AlignmentDirectional(0, 0),
+            //         margin: EdgeInsets.only(bottom: 10),
+            //         child: Text("0x" + transactionHash.toLowerCase(),
+            //             style: TextStyle(
+            //               fontSize: 15.0,
+            //               color: transactionResult.contains("success") ? KiraColors.green3 : KiraColors.kYellowColor,
+            //               fontFamily: 'NunitoSans',
+            //               fontWeight: FontWeight.w600,
+            //             )),
+            //       ),
+            //   ],
+            // ),
             if (loading == true) addLoadingIndicator(),
           ],
         ));
