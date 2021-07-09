@@ -7,6 +7,8 @@ import 'package:kira_auth/utils/colors.dart';
 
 part 'transaction.g.dart';
 
+enum TransactionStatus { CONFIRMED, UNCONFIRMED, FAILED }
+
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Transaction {
   String hash;
@@ -33,9 +35,7 @@ class Transaction {
     this.status = "",
     this.time,
     this.memo = "",
-  }) {
-    // assert(time != null);
-  }
+  }) {}
 
   factory Transaction.fromJson(Map<String, dynamic> json) => _$TransactionFromJson(json);
 
@@ -50,12 +50,40 @@ class Transaction {
   String get getAmount => this.amount + ' ' + this.token;
   String get getTimeString => new DateTime.fromMillisecondsSinceEpoch(this.time * 1000).relative(appendIfAfter: 'ago');
 
-  Color getStatusColor() {
+  TransactionStatus getStatus() {
+    TransactionStatus tStatus;
     switch (status) {
-      case 'success':
-        return KiraColors.green3;
+      case "confirmed":
+        tStatus = TransactionStatus.CONFIRMED;
+        break;
+      case "unconfirmed":
+        tStatus = TransactionStatus.UNCONFIRMED;
+        break;
+      case "failed":
+        tStatus = TransactionStatus.FAILED;
+        break;
       default:
-        return KiraColors.kGrayColor;
+        tStatus = TransactionStatus.CONFIRMED;
+        break;
     }
+    return tStatus;
+  }
+
+  Color getStatusColor() {
+    Color statusColor;
+    switch (getStatus()) {
+      case TransactionStatus.CONFIRMED:
+        statusColor = KiraColors.green3;
+        break;
+      case TransactionStatus.UNCONFIRMED:
+        statusColor = KiraColors.danger;
+        break;
+      case TransactionStatus.FAILED:
+        statusColor = KiraColors.danger;
+        break;
+      default:
+        statusColor = KiraColors.kGrayColor;
+    }
+    return statusColor;
   }
 }

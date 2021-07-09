@@ -62,7 +62,7 @@ class TransactionService {
       Transaction transaction = Transaction();
 
       transaction.hash = hash;
-      transaction.status = "success";
+      transaction.status = "confirmed";
       transaction.time = body[hash] != null ? body[hash]['time'] : 0;
 
       var txs = body[hash]['txs'] ?? List.empty();
@@ -76,6 +76,21 @@ class TransactionService {
       } else {
         transaction.sender = txs[0]['address'];
       }
+
+      transactions.add(transaction);
+    }
+
+    var ucResponse =
+        await http.get(apiUrl[0] + "/unconfirmed_txs", headers: {'Access-Control-Allow-Origin': apiUrl[1]});
+
+    Map<String, dynamic> ucBody = jsonDecode(ucResponse.body);
+    print(ucBody['txs']);
+
+    for (final tx in ucBody['txs']) {
+      Transaction transaction = Transaction();
+      transaction.hash = "-";
+      transaction.status = 'unconfirmed';
+      transaction.memo = tx['memo'];
 
       transactions.add(transaction);
     }

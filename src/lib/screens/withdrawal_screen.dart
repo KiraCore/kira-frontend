@@ -531,6 +531,75 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
         ));
   }
 
+  showAvailableNetworks(BuildContext context, String networkId, String nodeAddress) {
+    Widget disconnectButton = TextButton(
+      child: Text(
+        Strings.disconnect,
+        style: TextStyle(fontSize: 16),
+        textAlign: TextAlign.center,
+      ),
+      onPressed: () {
+        BlocProvider.of<NetworkBloc>(context).add(SetNetworkInfo(Strings.customNetwork, ""));
+        removePassword();
+        setInterxRPCUrl("");
+        Navigator.pushReplacementNamed(context, '/login');
+      },
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+            width: 250,
+            child: CustomDialog(
+              contentWidgets: [
+                Text(
+                  Strings.networkInformation,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 22, color: KiraColors.kPurpleColor, fontWeight: FontWeight.w600),
+                ),
+                SizedBox(height: 30),
+                Text(
+                  "Connected Network : ",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  "${networkId[0].toUpperCase()}${networkId.substring(1)}",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 18, color: KiraColors.black),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  "RPC Address : ",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  nodeAddress,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 18, color: KiraColors.black),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  "Network Status : ",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: KiraColors.blue1, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 32),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[disconnectButton]),
+              ],
+            ));
+      },
+    );
+  }
+
   Widget addWithdrawButton(isBig) {
     String denomination = currentToken != null ? currentToken.denomination : "";
     return Stack(
@@ -576,8 +645,10 @@ class _WithdrawalScreenState extends State<WithdrawalScreen> {
             // Sign the transaction
             final signedStdTx = await TransactionSigner.signStdTx(currentAccount, stdTx);
 
+            print(signedStdTx);
             // Broadcast signed transaction
             final result = await TransactionSender.broadcastStdTx(account: currentAccount, stdTx: signedStdTx);
+            print(result);
 
             if (result == false) {
               setState(() {
