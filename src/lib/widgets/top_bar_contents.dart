@@ -38,8 +38,7 @@ class _TopBarContentsState extends State<TopBarContents> {
 
   void getNodeStatus() async {
     String lastSearchedAccount = await getLastSearchedAccount();
-    if (lastSearchedAccount.isNotEmpty)
-      navParam = "&addr=" + lastSearchedAccount;
+    if (lastSearchedAccount.isNotEmpty) navParam = "&addr=" + lastSearchedAccount;
     selectedIndex = await getTopbarIndex();
     await statusService.getNodeStatus();
 
@@ -60,7 +59,7 @@ class _TopBarContentsState extends State<TopBarContents> {
     for (int i = 0; i < 6; i++) {
       if (!widget._loggedIn ? _notSearched[i] : true)
         items.add(Container(
-        margin: EdgeInsets.only(left: 30, right: 30, top: 10),
+          margin: EdgeInsets.only(left: 30, right: 30, top: 10),
           child: InkWell(
             onHover: (value) {
               setState(() {
@@ -71,7 +70,8 @@ class _TopBarContentsState extends State<TopBarContents> {
               setTopbarIndex(i);
               switch (i) {
                 case 0: // Account
-                  Navigator.pushReplacementNamed(context, '/account' + (!widget._loggedIn ? '?rpc=${statusService.rpcUrl}$navParam' : ''));
+                  Navigator.pushReplacementNamed(
+                      context, '/account' + (!widget._loggedIn ? '?rpc=${statusService.rpcUrl}$navParam' : ''));
                   break;
                 case 1: // Deposit
                   Navigator.pushReplacementNamed(context, '/deposit');
@@ -80,10 +80,12 @@ class _TopBarContentsState extends State<TopBarContents> {
                   Navigator.pushReplacementNamed(context, '/withdraw');
                   break;
                 case 3: // Network
-                  Navigator.pushReplacementNamed(context, '/network' + (!widget._loggedIn ? '?rpc=${statusService.rpcUrl}' : ''));
+                  Navigator.pushReplacementNamed(
+                      context, '/network' + (!widget._loggedIn ? '?rpc=${statusService.rpcUrl}' : ''));
                   break;
                 case 4: // Proposals
-                  Navigator.pushReplacementNamed(context, '/proposals' + (!widget._loggedIn ? '?rpc=${statusService.rpcUrl}' : ''));
+                  Navigator.pushReplacementNamed(
+                      context, '/proposals' + (!widget._loggedIn ? '?rpc=${statusService.rpcUrl}' : ''));
                   break;
                 case 5: // Settings
                   Navigator.pushReplacementNamed(context, widget._loggedIn ? '/settings' : '/login');
@@ -99,7 +101,8 @@ class _TopBarContentsState extends State<TopBarContents> {
                     !widget._loggedIn ? Strings.navItemTitlesExplorer[i] : Strings.navItemTitles[i],
                     style: TextStyle(
                       fontSize: 15,
-                      color: _isHovering[i] || i == selectedIndex ? KiraColors.kYellowColor : KiraColors.kGrayColor,),
+                      color: _isHovering[i] || i == selectedIndex ? KiraColors.kYellowColor : KiraColors.kGrayColor,
+                    ),
                   ),
                   SizedBox(height: 5),
                   Visibility(

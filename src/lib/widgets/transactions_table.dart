@@ -72,25 +72,25 @@ class _TransactionsTableState extends State<TransactionsTable> {
                   addNavigateControls(),
                   ...currentTransactions
                       .map((transaction) => ExpandableNotifier(
-                    child: ScrollOnExpand(
-                      scrollOnExpand: true,
-                      scrollOnCollapse: false,
-                      child: Card(
-                        clipBehavior: Clip.antiAlias,
-                        color: KiraColors.kBackgroundColor.withOpacity(0.2),
-                        child: ExpandablePanel(
-                          theme: ExpandableThemeData(
-                            headerAlignment: ExpandablePanelHeaderAlignment.center,
-                            tapHeaderToExpand: false,
-                            hasIcon: false,
-                          ),
-                          header: addRowHeader(transaction),
-                          collapsed: Container(),
-                          expanded: addRowBody(transaction),
-                        ),
-                      ),
-                    ),
-                  ))
+                            child: ScrollOnExpand(
+                              scrollOnExpand: true,
+                              scrollOnCollapse: false,
+                              child: Card(
+                                clipBehavior: Clip.antiAlias,
+                                color: KiraColors.kBackgroundColor.withOpacity(0.2),
+                                child: ExpandablePanel(
+                                  theme: ExpandableThemeData(
+                                    headerAlignment: ExpandablePanelHeaderAlignment.center,
+                                    tapHeaderToExpand: false,
+                                    hasIcon: false,
+                                  ),
+                                  header: addRowHeader(transaction),
+                                  collapsed: Container(),
+                                  expanded: addRowBody(transaction),
+                                ),
+                              ),
+                            ),
+                          ))
                       .toList(),
                 ]))));
   }
@@ -149,26 +149,26 @@ class _TransactionsTableState extends State<TransactionsTable> {
                     flex: 2,
                     child: Align(
                         child: InkWell(
-                          onTap: () {
-                            copyText(transaction.hash);
-                            showToast(Strings.txHashCopied);
-                          },
-                          child: Text(transaction.getReducedHash,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
-                        ))),
+                      onTap: () {
+                        copyText(transaction.hash);
+                        showToast(Strings.txHashCopied);
+                      },
+                      child: Text(transaction.getReducedHash,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+                    ))),
                 Expanded(
                     flex: 2,
                     child: Align(
                         child: InkWell(
-                          onTap: () {
-                            copyText(widget.isDeposit ? transaction.sender : transaction.recipient);
-                            showToast(Strings.senderAddressCopied);
-                          },
-                          child: Text(widget.isDeposit ? transaction.getReducedSender : transaction.getReducedRecipient,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
-                        ))),
+                      onTap: () {
+                        copyText(widget.isDeposit ? transaction.sender : transaction.recipient);
+                        showToast(Strings.senderAddressCopied);
+                      },
+                      child: Text(widget.isDeposit ? transaction.getReducedSender : transaction.getReducedRecipient,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: KiraColors.white.withOpacity(0.8), fontSize: 16)),
+                    ))),
                 Expanded(
                     flex: 1,
                     child: Text(
